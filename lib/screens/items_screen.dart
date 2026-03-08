@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/item_list.dart';
+import '../services/file_manager.dart';
 
 class ItemsScreen extends StatefulWidget {
   final ItemList list;
@@ -207,13 +208,46 @@ class _ItemsScreenState extends State<ItemsScreen> with TickerProviderStateMixin
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                editing == null ? 'Novo Item' : 'Editar Item',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    editing == null ? 'Novo Item' : 'Editar Item',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  // só mostra o botão de importar quando for "Novo Item", não no "Editar"
+                  if (editing == null)
+                    GestureDetector(
+                      onTap: () async {
+                        Navigator.pop(ctx); // fecha o dialog
+                        final newItems = await FileManager.importItems(_list.items);
+                        if (newItems == null) return;
+                        if (newItems.isEmpty) {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('Nenhum item novo encontrado!'),
+                              backgroundColor: const Color(0xFFFF4757),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                          return;
+                        }
+                        setState(() => _list.items.addAll(newItems));
+                        widget.onListUpdated(_list);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(Icons.upload_file_rounded,
+                            color: Color(0xFF6C63FF), size: 20),
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 20),
               TextField(

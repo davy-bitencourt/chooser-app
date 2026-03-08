@@ -77,36 +77,36 @@ class _ListsScreenState extends State<ListsScreen>
                 const SizedBox(height: 10),
                 SizedBox(
                   height: 120,
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 8,
-                      mainAxisSpacing: 6,
-                      crossAxisSpacing: 6,
-                    ),
-                    itemCount: _emojis.length,
-                    itemBuilder: (_, i) => GestureDetector(
-                      onTap: () =>
-                          setDialogState(() => selectedEmoji = _emojis[i]),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 150),
-                        decoration: BoxDecoration(
-                          color: selectedEmoji == _emojis[i]
-                              ? const Color(0xFF6C63FF).withOpacity(0.3)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: selectedEmoji == _emojis[i]
-                                ? const Color(0xFF6C63FF)
-                                : Colors.transparent,
-                            width: 2,
+                  child: SingleChildScrollView(
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: List.generate(_emojis.length, (i) {
+                        final isSelected = selectedEmoji == _emojis[i];
+                        return GestureDetector(
+                          onTap: () => setDialogState(() => selectedEmoji = _emojis[i]),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 150),
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? const Color(0xFF6C63FF).withOpacity(0.3)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: isSelected
+                                    ? const Color(0xFF6C63FF)
+                                    : Colors.transparent,
+                                width: 2,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(_emojis[i], style: const TextStyle(fontSize: 15)),
+                            ),
                           ),
-                        ),
-                        child: Center(
-                          child: Text(_emojis[i],
-                              style: const TextStyle(fontSize: 20)),
-                        ),
-                      ),
+                        );
+                      }),
                     ),
                   ),
                 ),
