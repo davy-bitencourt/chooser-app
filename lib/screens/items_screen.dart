@@ -535,51 +535,52 @@ class _ItemCard extends StatelessWidget {
                 ),
               ),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _ActionButton(
-                  icon: Icons.edit_rounded,
-                  color: const Color(0xFF6C63FF),
-                  onTap: onEdit,
-                ),
-                const SizedBox(width: 8),
-                _ActionButton(
-                  icon: Icons.delete_rounded,
-                  color: const Color(0xFFFF4757),
-                  onTap: onDelete,
-                ),
-              ],
-            ),
+            PopupMenuButton<String>(
+                    color: const Color(0xFF1A1A2E),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    onSelected: (v) {
+                      if (v == 'edit') onEdit();
+                      if (v == 'delete') onDelete();
+                    },
+                    itemBuilder: (_) => [
+                      const PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit_rounded,
+                                color: Color(0xFF6C63FF), size: 18),
+                            SizedBox(width: 10),
+                            Text('Editar',
+                                style: TextStyle(color: Colors.white)),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete_rounded,
+                                color: Color(0xFFFF4757), size: 18),
+                            SizedBox(width: 10),
+                            Text('Excluir',
+                                style: TextStyle(color: Color(0xFFFF4757))),
+                          ],
+                        ),
+                      ),
+                    ],
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6C63FF).withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.more_vert_rounded,
+                          color: Color(0xFF8888AA), size: 20),
+                    ),
+                  ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _ActionButton({
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: color, size: 16),
       ),
     );
   }
