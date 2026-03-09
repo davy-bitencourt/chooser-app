@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../models/item_list.dart';
 import '../services/storage_service.dart';
@@ -10,10 +12,8 @@ class ListsScreen extends StatefulWidget {
   State<ListsScreen> createState() => _ListsScreenState();
 }
 
-class _ListsScreenState extends State<ListsScreen>
-    with TickerProviderStateMixin {
+class _ListsScreenState extends State<ListsScreen> {
   final List<ItemList> _lists = [];
-  late AnimationController _fabController;
 
   final List<String> _emojis = [
     '🎯', '🎲', '🎮', '🍕', '🌟', '🚀', '🎵', '📚',
@@ -23,10 +23,6 @@ class _ListsScreenState extends State<ListsScreen>
   @override
   void initState() {
     super.initState();
-    _fabController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
     _loadLists();
   }
 
@@ -41,9 +37,90 @@ class _ListsScreenState extends State<ListsScreen>
 
   @override
   void dispose() {
-    _fabController.dispose();
     super.dispose();
   }
+
+ void _randomizeAll() {
+  if (_lists.isEmpty) return;
+
+  final results = _lists
+      .where((l) => l.items.isNotEmpty) // ignora listas vazias
+      .map((l) => MapEntry(l, l.items[Random().nextInt(l.items.length)]))
+      .toList();
+
+  showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+  child: Container(
+    padding: const EdgeInsets.all(24),
+    decoration: const BoxDecoration(
+      color: Color(0xFF1A1A2E),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // barra de arrastar
+        Container(
+          width: 40,
+          height: 4,
+          decoration: BoxDecoration(
+            color: const Color(0xFF333355),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Text('Sorteio do Dia 🎲',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold)),
+        const SizedBox(height: 20),
+        // scroll nos resultados
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              children: results.map((entry) => Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F0F1A),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                      color: const Color(0xFF6C63FF).withValues(alpha:0.3)),
+                ),
+                child: Row(
+                  children: [
+                    Text(entry.key.emoji, style: const TextStyle(fontSize: 24)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(entry.key.name,
+                              style: const TextStyle(
+                                  color: Color(0xFF8888AA), fontSize: 12)),
+                          Text(entry.value.name,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )).toList(),
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+    );
+  } 
 
   void _showCreateListDialog() {
     final nameController = TextEditingController();
@@ -91,7 +168,7 @@ class _ListsScreenState extends State<ListsScreen>
                             height: 40,
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? const Color(0xFF6C63FF).withOpacity(0.3)
+                                  ? const Color(0xFF6C63FF).withValues(alpha: 0.3)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
@@ -223,7 +300,7 @@ class _ListsScreenState extends State<ListsScreen>
                         duration: const Duration(milliseconds: 150),
                         decoration: BoxDecoration(
                           color: selectedEmoji == _emojis[i]
-                              ? const Color(0xFF6C63FF).withOpacity(0.3)
+                              ? const Color(0xFF6C63FF).withValues(alpha: 0.3)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
@@ -385,10 +462,6 @@ class _ListsScreenState extends State<ListsScreen>
                       child: Container(
                         width: 150,
                         height: 150,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFF6C63FF).withOpacity(0.08),
-                        ),
                       ),
                     ),
                   ],
@@ -398,17 +471,19 @@ class _ListsScreenState extends State<ListsScreen>
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child: Chip(
-                  label: Text(
-                    '${_lists.length} listas',
-                    style: const TextStyle(
-                        color: Color(0xFF6C63FF),
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold),
+                child: GestureDetector(
+                  onTap: _randomizeAll,  // <-- vira botão
+                  child: Chip(
+                    label: Text(
+                      '${_lists.length} listas',
+                      style: const TextStyle(
+                          color: Color(0xFF6C63FF),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    backgroundColor: const Color(0xFF6C63FF).withValues(alpha: .12),
+                    side: BorderSide(color: const Color(0xFF6C63FF).withValues(alpha: 0.3)),
                   ),
-                  backgroundColor: const Color(0xFF6C63FF).withOpacity(0.12),
-                  side: BorderSide(
-                      color: const Color(0xFF6C63FF).withOpacity(0.3)),
                 ),
               )
             ],
@@ -523,7 +598,7 @@ class _ListCard extends StatelessWidget {
               color: const Color(0xFF1A1A2E),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: const Color(0xFF6C63FF).withOpacity(0.15),
+                color: const Color(0xFF6C63FF).withValues(alpha: 0.15),
               ),
             ),
             child: Padding(
@@ -534,7 +609,7 @@ class _ListCard extends StatelessWidget {
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF6C63FF).withOpacity(0.12),
+                      color: const Color(0xFF6C63FF).withValues(alpha:0.12),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Center(
@@ -603,7 +678,7 @@ class _ListCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF6C63FF).withOpacity(0.08),
+                        color: const Color(0xFF6C63FF).withValues(alpha:0.08),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Icon(Icons.more_vert_rounded,
@@ -619,3 +694,4 @@ class _ListCard extends StatelessWidget {
     );
   }
 }
+

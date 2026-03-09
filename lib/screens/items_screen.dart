@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import '../models/item_list.dart';
 import '../services/file_manager.dart';
 
@@ -30,9 +32,7 @@ class _ItemsScreenState extends State<ItemsScreen> with TickerProviderStateMixin
     vsync: this,
     duration: const Duration(milliseconds: 500),
   );
-  late final Animation<double> _shakeAnimation = Tween<double>(begin: 0, end: 1).animate(
-    CurvedAnimation(parent: _shakeController, curve: Curves.elasticOut),
-  );
+  
   late final Animation<double> _resultScaleAnim = Tween<double>(begin: 0.5, end: 1.0).animate(
     CurvedAnimation(parent: _resultController, curve: Curves.elasticOut),
   );
@@ -97,102 +97,168 @@ class _ItemsScreenState extends State<ItemsScreen> with TickerProviderStateMixin
     _showResultBottomSheet(finalResult);
   }
 
-  void _showResultBottomSheet(ListItem item) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => SafeArea(   // <-- adiciona aqui
-        child: Container(
-          padding: const EdgeInsets.all(32),
-
-        decoration: const BoxDecoration(
-          color: Color(0xFF1A1A2E),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: const Color(0xFF333355),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 24),
-            ScaleTransition(
-              scale: _resultScaleAnim,
-              child: FadeTransition(
-                opacity: _resultFadeAnim,
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF6C63FF), Color(0xFF9B59B6)],
+void _showResultBottomSheet(ListItem item) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (ctx) {
+      bool copied = false;
+      return StatefulBuilder(
+        builder: (ctx, setSheetState) {
+          return SafeArea(
+            child: Stack(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF1A1A2E),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF333355),
+                          borderRadius: BorderRadius.circular(2),
                         ),
-                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      const SizedBox(height: 24),
+                      ScaleTransition(
+                        scale: _resultScaleAnim,
+                        child: FadeTransition(
+                          opacity: _resultFadeAnim,
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFF6C63FF), Color(0xFF9B59B6)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF6C63FF).withOpacity(0.4),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: const Text('🎲', style: TextStyle(fontSize: 40)),
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                'Sorteado!',
+                                style: TextStyle(
+                                  color: Color(0xFF8888AA),
+                                  fontSize: 14,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 28),
+                                    child: Text(
+                                      item.name,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 0,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Clipboard.setData(ClipboardData(text: item.name));
+                                        setSheetState(() => copied = true);
+                                        Future.delayed(const Duration(seconds: 1), () {
+                                          setSheetState(() => copied = false);
+                                        });
+                                      },
+                                      child: const Icon(Icons.copy_rounded,
+                                          color: Color(0xFF6C63FF), size: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 28),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () => Navigator.pop(ctx),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF6C63FF),
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(14)),
+                                        padding: const EdgeInsets.symmetric(vertical: 14),
+                                      ),
+                                      child: const Text('Confirmar',
+                                          style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // notificação no topo do bottom sheet
+                Positioned(
+                  top: 16,
+                  left: 32,
+                  right: 32,
+                  child: AnimatedOpacity(
+                    opacity: copied ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 300),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6C63FF),
+                        borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF6C63FF).withOpacity(0.4),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                      child: const Text('🎲', style: TextStyle(fontSize: 40)),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Sorteado!',
-                      style: TextStyle(
-                        color: Color(0xFF8888AA),
-                        fontSize: 14,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      item.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 28),
-                    Row(
-                      children: [
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.pop(ctx),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF6C63FF),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14)),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: const Text('Confirmar',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
+                      child: const Text(
+                        'Copiado!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),),
-    );
-  }
+          );
+        },
+      );
+    },
+  );
+}
 
   void _showItemDialog({ListItem? editing}) {
     final nameController = TextEditingController(text: editing?.name ?? '');
@@ -440,12 +506,6 @@ class _ItemsScreenState extends State<ItemsScreen> with TickerProviderStateMixin
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: GestureDetector(
             onTap: _randomize,
-          child: AnimatedBuilder(
-            animation: _shakeAnimation,
-            builder: (ctx, child) => Transform.rotate(
-              angle: _isRandomizing ? sin(_shakeAnimation.value * pi * 8) * 0.05 : 0,
-              child: child,
-            ),
             child: Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -481,7 +541,7 @@ class _ItemsScreenState extends State<ItemsScreen> with TickerProviderStateMixin
             ),
           ),
         ),
-      ),),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showItemDialog(),
         backgroundColor: const Color(0xFF6C63FF),
