@@ -205,46 +205,6 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
                         fontSize: 22,
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
-                const Text('Escolha um emoji',
-                    style: TextStyle(color: Color(0xFF8888AA), fontSize: 13)),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 120,
-                  child: SingleChildScrollView(
-                    child: Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: List.generate(_emojis.length, (i) {
-                        final isSelected = selectedEmoji == _emojis[i];
-                        return GestureDetector(
-                          onTap: () => setDialogState(() => selectedEmoji = _emojis[i]),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 150),
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? const Color(0xFF6C63FF).withValues(alpha: 0.3)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: isSelected
-                                    ? const Color(0xFF6C63FF)
-                                    : Colors.transparent,
-                                width: 2,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(_emojis[i],
-                                  style: const TextStyle(fontSize: 15)),
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
                 TextField(
                   controller: nameController,
                   autofocus: true,
@@ -280,7 +240,6 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
                           final newSession = Session(
                             id: DateTime.now().millisecondsSinceEpoch.toString(),
                             name: nameController.text.trim(),
-                            emoji: selectedEmoji,
                           );
                           setState(() {
                             _sessions.add(newSession);
@@ -613,7 +572,6 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
 
 void _showEditSessionDialog(Session session) {
   final nameController = TextEditingController(text: session.name);
-  String selectedEmoji = session.emoji;
 
   showDialog(
     context: context,
@@ -630,43 +588,6 @@ void _showEditSessionDialog(Session session) {
               const Text('Editar Sessão',
                   style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
-              const Text('Escolha um emoji',
-                  style: TextStyle(color: Color(0xFF8888AA), fontSize: 13)),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 120,
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: List.generate(_emojis.length, (i) {
-                      final isSelected = selectedEmoji == _emojis[i];
-                      return GestureDetector(
-                        onTap: () => setDialogState(() => selectedEmoji = _emojis[i]),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? const Color(0xFF6C63FF).withValues(alpha: 0.3)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: isSelected ? const Color(0xFF6C63FF) : Colors.transparent,
-                              width: 2,
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(_emojis[i], style: const TextStyle(fontSize: 15)),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
               TextField(
                 controller: nameController,
                 autofocus: true,
@@ -703,7 +624,6 @@ void _showEditSessionDialog(Session session) {
                           if (idx != -1) {
                             _sessions[idx] = _sessions[idx].copyWith(
                               name: nameController.text.trim(),
-                              emoji: selectedEmoji,
                             );
                           }
                         });
@@ -882,15 +802,12 @@ void _deleteSession(String id) {
                         ),
                       );
                     },
-                    child: Tab(text: '${s.emoji} ${s.name}'),
+                    child: Tab(text: '${s.name}'),
                   );
                 }),
-                // botão de nova sessão
-                GestureDetector(
-                  onTap: _showCreateSessionDialog,
-                  child: const Tab(
-                    child: Icon(Icons.add_rounded, color: Color(0xFF8888AA), size: 20),
-                  ),
+                IconButton(
+                  icon: const Icon(Icons.add_rounded, color: Color(0xFF8888A9)),
+                  onPressed: _showCreateSessionDialog,
                 ),
               ],
             ),

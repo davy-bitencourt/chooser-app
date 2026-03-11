@@ -54,14 +54,12 @@ class StorageService {
   static Map<String, dynamic> _sessionToJson(Session s) => {
         'id': s.id,
         'name': s.name,
-        'emoji': s.emoji,
         'createdAt': s.createdAt.toIso8601String(),
       };
 
   static Session _sessionFromJson(Map<String, dynamic> j) => Session(
         id: j['id'] as String,
         name: j['name'] as String,
-        emoji: j['emoji'] as String,
         createdAt: DateTime.parse(j['createdAt'] as String),
       );
 
