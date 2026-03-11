@@ -837,7 +837,7 @@ void _deleteSession(String id) {
               dividerColor: Colors.transparent,
               tabs: [
                 ..._sessions.asMap().entries.map((entry) {
-                  final i = entry.key;
+                  // final i = entry.key; // ainda será usado
                   final s = entry.value;
                   return GestureDetector(
                     onLongPress: () {
