@@ -454,12 +454,8 @@ void _showResultBottomSheet(ListItem item) {
                           Container(
                             width: 80,
                             height: 80,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1A1A2E),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
                             child: const Center(
-                              child: Text('📝', style: TextStyle(fontSize: 32)),
+                              child: Icon(Icons.edit_document, size: 75),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -599,12 +595,6 @@ class _ItemCard extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               width: 36,
               height: 36,
-              decoration: BoxDecoration(
-                color: isHighlighted
-                    ? const Color(0xFF6C63FF)
-                    : const Color(0xFF6C63FF).withOpacity(0.12),
-                borderRadius: BorderRadius.circular(10),
-              ),
               child: Center(
                 child: isHighlighted
                     ? const Icon(Icons.star_rounded, color: Colors.white, size: 18)
@@ -665,10 +655,6 @@ class _ItemCard extends StatelessWidget {
                     ],
                     child: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF6C63FF).withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                       child: const Icon(Icons.more_vert_rounded,
                           color: Color(0xFF8888AA), size: 20),
                     ),

@@ -1,3 +1,30 @@
+class Session {
+  String id;
+  String name;
+  String emoji;
+  DateTime createdAt;
+
+  Session({
+    required this.id,
+    required this.name,
+    required this.emoji,
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  Session copyWith({
+    String? id,
+    String? name,
+    String? emoji,
+  }) {
+    return Session(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      emoji: emoji ?? this.emoji,
+      createdAt: createdAt,
+    );
+  }
+}
+
 class ItemList {
   String id;
   String name;

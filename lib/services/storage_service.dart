@@ -3,23 +3,67 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/item_list.dart';
 
 class StorageService {
-  static const _key = 'lists_data';
+  static const _sessionsKey = 'sessions_data';
   static SharedPreferences? _prefs;
 
   static Future<SharedPreferences> get _instance async =>
       _prefs ??= await SharedPreferences.getInstance();
 
-  static Future<void> saveLists(List<ItemList> lists) async {
+  // ── Sessões ──────────────────────────────────────────
+
+  static Future<void> saveSessions(List<Session> sessions) async {
     final prefs = await _instance;
-    await prefs.setString(_key, jsonEncode(lists.map(_listToJson).toList()));
+    await prefs.setString(
+      _sessionsKey,
+      jsonEncode(sessions.map(_sessionToJson).toList()),
+    );
   }
 
-  static Future<List<ItemList>> loadLists() async {
+  static Future<List<Session>> loadSessions() async {
     final prefs = await _instance;
-    final raw = prefs.getString(_key);
+    final raw = prefs.getString(_sessionsKey);
+    if (raw == null) return [];
+    return (jsonDecode(raw) as List).map((j) => _sessionFromJson(j)).toList();
+  }
+
+  // ── Listas de uma sessão ─────────────────────────────
+
+  static Future<void> saveSessionLists(
+      String sessionId, List<ItemList> lists) async {
+    final prefs = await _instance;
+    await prefs.setString(
+      'session_$sessionId',
+      jsonEncode(lists.map(_listToJson).toList()),
+    );
+  }
+
+  static Future<List<ItemList>> loadSessionLists(String sessionId) async {
+    final prefs = await _instance;
+    final raw = prefs.getString('session_$sessionId');
     if (raw == null) return [];
     return (jsonDecode(raw) as List).map((j) => _listFromJson(j)).toList();
   }
+
+  static Future<void> deleteSessionLists(String sessionId) async {
+    final prefs = await _instance;
+    await prefs.remove('session_$sessionId');
+  }
+
+  // ── JSON helpers ─────────────────────────────────────
+
+  static Map<String, dynamic> _sessionToJson(Session s) => {
+        'id': s.id,
+        'name': s.name,
+        'emoji': s.emoji,
+        'createdAt': s.createdAt.toIso8601String(),
+      };
+
+  static Session _sessionFromJson(Map<String, dynamic> j) => Session(
+        id: j['id'] as String,
+        name: j['name'] as String,
+        emoji: j['emoji'] as String,
+        createdAt: DateTime.parse(j['createdAt'] as String),
+      );
 
   static Map<String, dynamic> _listToJson(ItemList l) => {
         'id': l.id,
