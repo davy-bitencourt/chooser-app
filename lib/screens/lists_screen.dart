@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../models/item_list.dart';
 import '../services/storage_service.dart';
 import 'items_screen.dart';
+import '../styles/styles.dart';
 
 class ListsScreen extends StatefulWidget {
   const ListsScreen({super.key});
@@ -113,17 +114,13 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: Text('Sorteio do Dia 🎲',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold
-                        ),
+                      child: Text('Sorteio do Dia',
+                        style: AppStyles.textB1,
                         textAlign: TextAlign.center,
                       ),
                     ),
                     Positioned(
-                      right: 0,
+                      left: 0,
                       child: GestureDetector(
                         onTap: () {
                           final text = results
@@ -185,7 +182,6 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
 
   void _showCreateSessionDialog() {
     final nameController = TextEditingController();
-    String selectedEmoji = _emojis[0];
 
     showDialog(
       context: context,
@@ -200,10 +196,8 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Nova Sessão',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold)),
+                    style: AppStyles.textB1, 
+                    ),
                 const SizedBox(height: 20),
                 TextField(
                   controller: nameController,
@@ -230,8 +224,7 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancelar',
-                          style: TextStyle(color: Color(0xFF8888AA))),
+                      child: const Text('Cancelar', style: AppStyles.textS1),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
@@ -259,8 +252,7 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 12),
                       ),
-                      child: const Text('Criar',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: const Text('Criar', style: AppStyles.textS1),
                     ),
                   ],
                 ),
@@ -289,13 +281,10 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Nova Lista',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold)),
-                const SizedBox(height: 20),
+                    style: AppStyles.textB1),
+                const SizedBox(height: 15),
                 const Text('Escolha um emoji',
-                    style: TextStyle(color: Color(0xFF8888AA), fontSize: 13)),
+                    style: AppStyles.textSS2),
                 const SizedBox(height: 10),
                 SizedBox(
                   height: 120,
@@ -359,8 +348,7 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancelar',
-                          style: TextStyle(color: Color(0xFF8888AA))),
+                      child: const Text('Cancelar', style: AppStyles.textS1),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
@@ -385,8 +373,7 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 12),
                       ),
-                      child: const Text('Criar',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: const Text('Criar', style: AppStyles.textS1),
                     ),
                   ],
                 ),
@@ -415,13 +402,10 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Editar Lista',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold)),
+                    style: AppStyles.textB1),
                 const SizedBox(height: 20),
                 const Text('Escolha um emoji',
-                    style: TextStyle(color: Color(0xFF8888AA), fontSize: 13)),
+                    style: AppStyles.textSS2),
                 const SizedBox(height: 10),
                 SizedBox(
                   height: 120,
@@ -485,8 +469,7 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancelar',
-                          style: TextStyle(color: Color(0xFF8888AA))),
+                      child: const Text('Cancelar', style: AppStyles.textS1),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
@@ -542,8 +525,7 @@ class _ListsScreenState extends State<ListsScreen> with TickerProviderStateMixin
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar',
-                style: TextStyle(color: Color(0xFF8888AA))),
+            child: const Text('Cancelar', style: AppStyles.textS1),
           ),
           ElevatedButton(
             onPressed: () {
@@ -585,8 +567,7 @@ void _showEditSessionDialog(Session session) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Editar Sessão',
-                  style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text('Editar Sessão', style: AppStyles.textB1),
               const SizedBox(height: 20),
               TextField(
                 controller: nameController,
@@ -613,7 +594,7 @@ void _showEditSessionDialog(Session session) {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(ctx),
-                    child: const Text('Cancelar', style: TextStyle(color: Color(0xFF8888AA))),
+                    child: const Text('Cancelar', style: AppStyles.textS1),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
@@ -663,7 +644,7 @@ void _deleteSession(String id) {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancelar', style: TextStyle(color: Color(0xFF8888AA))),
+          child: const Text('Cancelar', style: AppStyles.textS1),
         ),
         ElevatedButton(
           onPressed: () {
@@ -693,30 +674,23 @@ void _deleteSession(String id) {
     final lists = _currentLists;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
+      backgroundColor: AppColors.bgDeep,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 160,
             floating: false,
             pinned: true,
-            backgroundColor: const Color(0xFF0F0F1A),
+            backgroundColor: AppColors.bgSurface,
             leading: IconButton(
               icon: const Icon(Icons.more_vert_rounded, color: Color(0xFF8888AA)),
               onPressed: () {
               },
             ),
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                _currentSession?.name ?? 'Minhas Listas',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
+              title: Text(_currentSession?.name ?? 'Minhas Listas', style: AppStyles.textB1),
               titlePadding: const EdgeInsets.only(left: 20, bottom: 48),
-              background: Container(
+              background: Container( // tirar esse gradiente seja lá onde ele esteja
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
@@ -774,15 +748,11 @@ void _deleteSession(String id) {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(s.name,
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
+                                Text(s.name, style: AppStyles.textB1),
                                 const SizedBox(height: 20),
                                 ListTile(
                                   leading: const Icon(Icons.edit_rounded, color: Color(0xFF6C63FF)),
-                                  title: const Text('Editar', style: TextStyle(color: Colors.white)),
+                                  title: const Text('Editar', style: AppStyles.textS1),
                                   onTap: () {
                                     Navigator.pop(ctx);
                                     _showEditSessionDialog(s);
@@ -790,7 +760,7 @@ void _deleteSession(String id) {
                                 ),
                                 ListTile(
                                   leading: const Icon(Icons.delete_rounded, color: Color(0xFFFF4757)),
-                                  title: const Text('Excluir', style: TextStyle(color: Color(0xFFFF4757))),
+                                  title: const Text('Excluir', style: AppStyles.textS1),
                                   onTap: () {
                                     Navigator.pop(ctx);
                                     _deleteSession(s.id);
@@ -826,14 +796,9 @@ void _deleteSession(String id) {
                       )
                     ),
                     const SizedBox(height: 20),
-                    const Text('Nenhuma sessão ainda',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
+                    const Text('Nenhuma sessão ainda', style: AppStyles.textM1),
                     const SizedBox(height: 8),
-                    const Text('Crie sua primeira sessão!',
-                        style: TextStyle(color: Color(0xFF8888AA), fontSize: 14)),
+                    const Text('Crie sua primeira sessão!', style: AppStyles.textSS2),
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
                       onPressed: _showCreateSessionDialog,
@@ -842,10 +807,8 @@ void _deleteSession(String id) {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF6C63FF),
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14)),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        padding: const EdgeInsets.symmetric( horizontal: 24, vertical: 14),
                       ),
                     ),
                   ],
@@ -866,16 +829,12 @@ void _deleteSession(String id) {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text('Nenhuma lista ainda',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
+                    const Text('Nenhuma lista ainda', style: AppStyles.textM1),
                     const SizedBox(height: 8),
                     const Text(
                       'Crie sua primeira lista\npara começar!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Color(0xFF8888AA), fontSize: 14),
+                      style: AppStyles.textSS2,
                     ),
                   ],
                 ),
